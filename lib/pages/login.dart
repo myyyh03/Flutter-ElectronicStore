@@ -15,17 +15,16 @@ class Login extends StatefulWidget {
 }
 
 class _MyLoginForm extends State<Login> {
-
-Future<void> startSession(int userId) async {
-  Database db = await DataBaseHandler.db;
-  await db.execute(
-    'CREATE TABLE IF NOT EXISTS session (userId INT PRIMARY KEY)',
-  );
-  await db.insert(
-    'session',
-    {'userId': userId},
-  );
-}
+  Future<void> startSession(int userId) async {
+    Database db = await DataBaseHandler.db;
+    await db.execute(
+      'CREATE TABLE IF NOT EXISTS session (userId INT PRIMARY KEY)',
+    );
+    await db.insert(
+      'session',
+      {'userId': userId},
+    );
+  }
 
   GlobalKey<FormState> formState = GlobalKey();
   TextEditingController _mailController = TextEditingController();
@@ -107,21 +106,23 @@ Future<void> startSession(int userId) async {
                                   horizontal: 50, vertical: 20)),
                           backgroundColor:
                               MaterialStateProperty.all(Colors.purple)),
-                      onPressed: ()async {
+                      onPressed: () async {
                         String mail = _mailController.text;
                         String pass = _passController.text;
                         Database dbClient = await DataBaseHandler.db;
-                        user? u = await user.getUserByMail(mail , dbClient);
-                        if (formState.currentState!.validate() && u != null && u.pass == pass) {
-                            //Start your session
-                            await startSession(u.id!);
+                        user? u = await user.getUserByMail(mail, dbClient);
+                        if (formState.currentState!.validate() &&
+                            u != null &&
+                            u.pass == pass) {
+                          //Start your session
+                          await startSession(u.id!);
 
-                            //navigate to MainScreen
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder:  (context) => MainScreen()));
-                        }else{
+                          //navigate to MainScreen
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainScreen()));
+                        } else {
                           setState(() {
                             ErrMsg = 'Invalid Mail or Password';
                           });
@@ -133,7 +134,7 @@ Future<void> startSession(int userId) async {
                         style: TextStyle(color: Colors.white, fontSize: 19),
                       )),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
 // text Button
                   Container(
@@ -149,17 +150,21 @@ Future<void> startSession(int userId) async {
                         child: const Text(
                           'Dont have an account ?',
                           style: TextStyle(
+                              decoration: TextDecoration.underline,
                               color: Colors.purple,
-                              fontSize: 30,
+                              fontSize: 25,
                               fontWeight: FontWeight.bold),
                         )),
                   ),
-                const SizedBox(height: 20.0),
-                Container(
-                  alignment: Alignment.center,
-                  child:
-                    Text(ErrMsg, style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),                  
-                ),
+                  const SizedBox(height: 20.0),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      ErrMsg,
+                      style: const TextStyle(
+                          color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ],
               )),
         ),

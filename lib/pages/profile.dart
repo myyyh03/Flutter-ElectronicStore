@@ -15,15 +15,15 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   bool isObsecurePassword = true;
 
-  Future<Map<String , dynamic>> _fetchdata()async{
+  Future<Map<String, dynamic>> _fetchdata() async {
     Database db = await DataBaseHandler.db;
-    List<Map<String , dynamic>> idLis = await db.query('session');
+    List<Map<String, dynamic>> idLis = await db.query('session');
     int id = idLis[0]['userId'];
 
     user? u = await user.getUserByID(id, db);
 
-    Map<String ,dynamic>mp = {
-      'id' : u!.id,
+    Map<String, dynamic> mp = {
+      'id': u!.id,
       'name': u.name,
       'mail': u.mail,
       'pass': u.pass,
@@ -34,21 +34,33 @@ class _ProfileState extends State<Profile> {
   @override
   build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text('Your profile'),
-            backgroundColor:  Colors.purple,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '  Your ',
+                style: TextStyle(
+                    color: Colors.purple, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Profile',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            ],
           ),
-          body: Container(
-            padding: EdgeInsets.only(left: 15, right: 15, top: 20),
-            child: FutureBuilder(
+        ),
+        body: Container(
+          padding: EdgeInsets.only(left: 15, right: 15, top: 20),
+          child: FutureBuilder(
               // onTap: () {
               //   FocusScope.of(context).unfocus();
               // },
               future: _fetchdata(),
-              builder:(context , snapshot){
-                if(snapshot.hasData){
-                  return  ListView(
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return ListView(
                     children: [
                       Center(
                         child: Stack(
@@ -57,7 +69,8 @@ class _ProfileState extends State<Profile> {
                               width: 130,
                               height: 130,
                               decoration: BoxDecoration(
-                                border: Border.all(width: 4, color: Colors.white),
+                                border:
+                                    Border.all(width: 4, color: Colors.white),
                                 boxShadow: [
                                   BoxShadow(
                                     spreadRadius: 2,
@@ -85,61 +98,66 @@ class _ProfileState extends State<Profile> {
                                       width: 4,
                                       color: Colors.white,
                                     ),
-                                    color:  Colors.purple),
-                                child: Icon(
+                                    color: Colors.purple),
+                                child: const Icon(
                                   Icons.edit,
                                   color: Colors.white,
                                 ),
                               ),
                             ),
-                            
                           ],
                         ),
                       ),
-                      BuildTextField('${snapshot.data!['name']}', 'Name', false),
-                      BuildTextField('${snapshot.data!['mail']}', 'Email', false),
-                      BuildTextField('${snapshot.data!['pass']}','Password' , true),
-                      SizedBox(height: 20,),
+                      BuildTextField(
+                          '${snapshot.data!['name']}', 'Name', false),
+                      BuildTextField(
+                          '${snapshot.data!['mail']}', 'Email', false),
+                      BuildTextField(
+                          '${snapshot.data!['pass']}', 'Password', true),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       ElevatedButton(
-                              style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20)),
-                                  backgroundColor: MaterialStateProperty.all(Colors.purple)),
-                              onPressed: () async {
-                                Database db = await DataBaseHandler.db;
-                                await db.execute('DROP TABLE session');
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Login()));
-                                },
-                              child: const Text(
-                                'Log Out',
-                                style: TextStyle(color: Colors.white, fontSize: 19),
-                              )),
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 50, vertical: 20)),
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.purple)),
+                          onPressed: () async {
+                            Database db = await DataBaseHandler.db;
+                            await db.execute('DROP TABLE session');
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Login()));
+                          },
+                          child: const Text(
+                            'Log Out',
+                            style: TextStyle(color: Colors.white, fontSize: 19),
+                          )),
                     ],
                   );
-              }else{
-                return CircularProgressIndicator();
-              }
-              }
-            ),
-          ),
+                } else {
+                  return CircularProgressIndicator();
+                }
+              }),
         ),
-      );
+      ),
+    );
   }
 
   Widget BuildTextField(
       String labelText, String placeholder, bool isPasswordTextField) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 30),
+      padding: const EdgeInsets.only(bottom: 30),
       child: TextField(
         readOnly: true,
         obscureText: isPasswordTextField ? true : false,
         decoration: InputDecoration(
           suffixIcon: isPasswordTextField
               ? IconButton(
-                  icon: Icon(Icons.remove_red_eye, color: Colors.grey),
+                  icon: const Icon(Icons.remove_red_eye, color: Colors.grey),
                   onPressed: () {
                     setState(() {
                       isObsecurePassword = !isObsecurePassword;
@@ -149,15 +167,13 @@ class _ProfileState extends State<Profile> {
               : null,
           contentPadding: EdgeInsets.only(bottom: 5),
           labelText: placeholder,
-          labelStyle: TextStyle(fontSize: 14 , color: Colors.purple),
+          labelStyle: TextStyle(fontSize: 14, color: Colors.purple),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: labelText,
-          hintStyle: TextStyle(
+          hintStyle: const TextStyle(
               fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ),
     );
   }
 }
-
-
